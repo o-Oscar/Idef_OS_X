@@ -7,7 +7,7 @@ if __name__ == "__main__" and False:
 	
 	if not motors.check_configuration ():
 		print("error in reading config")
-	
+
 	else:
 		print("config is matching")
 		

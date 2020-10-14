@@ -1,55 +1,31 @@
 import can
 import time
 
-def send_one(command):
-
-    # this uses the default configuration (for example from the config file)
-    # see https://python-can.readthedocs.io/en/stable/configuration.html
-    bus=can.interface.Bus(channel='can0', bustype='socketcan_native')
-    # Using specific buses works similar:
-    # bus = can.interface.Bus(bustype='socketcan', channel='vcan0', bitrate=250000)
-    # bus = can.interface.Bus(bustype='pcan', channel='PCAN_USBBUS1', bitrate=250000)
-    # bus = can.interface.Bus(bustype='ixxat', channel=0, bitrate=250000)
-    # bus = can.interface.Bus(bustype='vector', app_name='CANalyzer', channel=0, bitrate=250000)
-    # ...
-
-    msg = can.Message(arbitration_id=0x142,
-                      data=command,
-                      is_extended_id=False)
-    print(msg)
-    try:
-        bus.send(msg)
-        print("Message sent on {}".format(bus.channel_info))
-    except can.CanError:
-        print("Message NOT sent")
-    try:
-        bus.send(msg)
-        print("Message sent on {}".format(bus.channel_info))
-    except can.CanError:
-        print("Message NOT sent")
-    print(bus.recv())
-
 
 """
 Fonctions de conversion
 """
 
-def speed_to_for_bytes(speed) : #speed en tours par seconde
+def speed_to_four_bytes(speed) : #speed en tours par seconde
     speed_very_high_byte=int(6*36000*speed//(2**24))
     speed_high_byte=int((6*36000*speed-speed_very_high_byte*2**24)//(2**16))
     speed_low_byte=int((6*36000*speed-speed_very_high_byte*2**24-speed_high_byte*2**16)//(2**8))
     speed_very_low_byte=int((6*36000*speed-speed_very_high_byte*2**24-speed_high_byte*2**16-speed_low_byte*2**8)//1)
     return speed_very_low_byte, speed_low_byte, speed_high_byte, speed_very_high_byte
 
-#def byte_to_speed(speed_low_byte, speed_high_byte)
+
 
 def speed_to_two_bytes(speed) : #speed en tours par seconde
     speed_high_byte=int(6*360*speed//(2**8))
     speed_low_byte=int((6*360*speed-speed_high_byte*2**8)//1)
     return speed_low_byte, speed_high_byte
 
+def two_bytes_to_speed(speed_low_byte, speed_high_byte): #speed en tours par seconde
+    return (speed_low_byte+2**6*speed_hight_byte)/(6*360)
 
-def position_to_for_bytes(position) : #en tours
+
+
+def position_to_four_bytes(position) : #en tours
     position_very_high_byte=int(6*36000*position//(2**24))
     position_high_byte=int((6*36000*position-position_very_high_byte*2**24)//(2**16))
     position_low_byte=int((6*36000*position-position_very_high_byte*2**24-position_high_byte*2**16)//(2**8))
@@ -64,15 +40,20 @@ def position_to_two_bytes(position) : #position en tours
     position_low_byte=int((6*360*position-position_high_byte*2**8)//1)
     return position_low_byte, position_high_byte
 
+
+def two_bytes_to_position(position_low_byte, position_high_byte) : #position en tours
+    return (position_low_byte+2**8*position_high_byte)  
+
+
+def two_bytes_to_torque(torque_low_bytes, torque_high_bytes) :
+    pass
+
 """
 Fonctions de commandes
 """
 
 
-
-
-### Read PID parameter command
-
+#Fonction commande générale
 
 
 def send_command(command,ide) :
@@ -82,20 +63,27 @@ def send_command(command,ide) :
     msg = can.Message(arbitration_id=0x140+ide,
                       data=command,
                       is_extended_id=False)
-    print(msg)
+    #print(msg)
     try:
         bus.send(msg)
-        print("Message sent on {}".format(bus.channel_info))
+        #print("Message sent on {}".format(bus.channel_info))
     except can.CanError:
-        print("Message NOT sent")
+        #print("Message NOT sent")
+        pass
     try:
         bus.send(msg)
-        print("Message sent on {}".format(bus.channel_info))
+        #print("Message sent on {}".format(bus.channel_info))
     except can.CanError:
-        print("Message NOT sent")
-    print(bus.recv())
+        #print("Message NOT sent")
+        pass
+    #print(bus.recv())
     return(bus.recv())
 
+
+
+
+
+### Read PID parameter command
 
 
 
@@ -153,7 +141,18 @@ def write_to_ROM_parameter(Position_loop_Kp,Position_loop_Ki,
 ### Write acceleration data to RAM command
 
 
-
+### Read encoder data command
+    
+def Read_encoder_data(ide) :
+    retour=send_command([0x90, 0, 0, 0, 0, 0, 0, 0],ide).data
+    position_low_byte=retour[2]
+    position_high_byte=retour[3]
+    position_low_byte_bis=retour[4]
+    position_high_byte_bis=retour[5]
+    position_low_byte_ter=retour[6]
+    position_high_byte_ter=retour[7]
+    #return two_bytes_to_position(position_low_byte,position_high_byte),two_bytes_to_position(position_low_byte_bis,position_high_byte_bis),two_bytes_to_position(position_low_byte_ter,position_high_byte_ter)
+    return retour
 
 ### Write encoder offset command
 
@@ -220,16 +219,16 @@ def motor_running(ide) :
 ### Speed control command
     
 def speed_control (speed,ide) :
-    speed_very_low_byte, speed_low_byte, speed_high_byte, speed_very_high_byte=speed_to_for_bytes(speed)
+    speed_very_low_byte, speed_low_byte, speed_high_byte, speed_very_high_byte=speed_to_four_bytes(speed)
     retour=send_command([0xA2, 0, 0, 0, speed_very_low_byte, speed_low_byte, speed_high_byte, speed_very_high_byte],ide)
     print("reponse :")
     print(retour.data)
 
 
-### Position control command 4
+### Position control command 2
 
-def position_control(position, speed,ide) :
-    position_very_low_byte, position_low_byte, position_high_byte, position_very_high_byte=position_to_for_bytes(position)
+def position_control(position,speed,ide) :
+    position_very_low_byte, position_low_byte, position_high_byte, position_very_high_byte=position_to_four_bytes(position)
     speed_low_byte, speed_high_byte=speed_to_two_bytes(speed)
     
     retour=send_command([0xA4, 0, speed_low_byte, speed_high_byte, position_very_low_byte, position_low_byte, position_high_byte, position_very_high_byte],ide).data
@@ -244,24 +243,51 @@ def position_control(position, speed,ide) :
     
     position_low_byte=retour[6]
     position_low_byte=retour[7]
+
+import numpy as np
+import struct
+
+def motor_pos (): # motor position in turn
+    data = send_command([0x90, 0, 0, 0, 0, 0, 0, 0],2).data
+    first = data[2]
+    sec = data[3]
+    return (first + 2**8 * sec)/(2**16)
+
+def actuator_pos_by_hand (): # actuator pos in rad but only the positiv values (and coded by hand)
+    data=send_command([0x92, 0, 0, 0, 0, 0, 0, 0],2).data
+    data[0] = 0 #data[1:]
+    print(struct.unpack("<q", data))
+    enc = 0
+    data = data[1:]
+    for x in data[::-1]:
+        enc *= 2**8
+        enc += x
+        
+    return enc * 2 * np.pi / 36000 / 6
+
+def actuator_pos (): # actuator pos in rad nice and clean
+    data=send_command([0x92, 0, 0, 0, 0, 0, 0, 0],2).data
+    data[0] = 0
+    return struct.unpack("<q", data)[0] *2 * np.pi / 2**8 / 36000 / 6
     
-
-
-
-
+    
 if __name__ == '__main__':
-    read_PID_parameter(2)
-    write_to_RAM_parameter(100,100,100,100,100,100,2)
-    read_PID_parameter(2)
-    position_control(0, 1, 2)
-
-
-#     position_control(1, 1, 2)
-#     time.sleep(2)
-#     position_control(0, 1, 2)
-#     time.sleep(2)
-#     motor_off(2)
-
+    """
+    position_control(1, 0.5, 2)
+    value = 0
+    for i in range(100):
+        time.sleep(0.04)
+        #print(motor_pos())
+        print(actuator_pos())
+        
+    position_control(0, 0.5, 2)
+    """
+    print(motor_pos())
+    print(actuator_pos ())
+    
+    #data=send_command([0x80, 0, 0, 0, 0, 0, 0, 0],2).data # turns the motor off (CONNECTS the motor phases)
+    data=send_command([0xA1, 0, 0, 0, 0, 0, 0, 0],2).data # set torque to zero (UNPLUGS the motor phases)
+    
 
 
 
