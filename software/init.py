@@ -2,7 +2,7 @@
 sudo ip link set can0 up type can bitrate 1000000
 cd /home/pi/psc/IDEFX/software
 source activate psc
-python init.py rest
+python init.py rest 1 2 3
 python init.py zero 1 2 3
 """
 """
@@ -35,6 +35,7 @@ if __name__ == "__main__":
 		if len(sys.argv) < 3:
 			raise NameError("Need motors args to operate")
 		else:
+			motors.check_configuration ()
 			motors_id = [int(x) for x in sys.argv[2:]]
 			print(motors_id)
 			motor_pose = load_motor_pose()
@@ -50,6 +51,7 @@ if __name__ == "__main__":
 		if len(sys.argv) < 3:
 			raise NameError("Need motors args to operate")
 		else:
+			motors.check_configuration ()
 			motors_id = [int(x) for x in sys.argv[2:]]
 			print(motors_id)
 			motor_pose = load_motor_pose()
