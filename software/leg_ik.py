@@ -3,8 +3,8 @@ import numpy as np
 
 class Leg:
 	def __init__ (self):
-		self.l1 = 0.167
-		self.l2 = 0.18
+		self.l1 = 0.19
+		self.l2 = 0.179
 		self.create_range ()
 	
 	def motor_pos (self, action):
@@ -19,9 +19,9 @@ class Leg:
 		b = (np.identity(3)-a) @ self.b_m + a @ self.b_M
 		x = np.linalg.solve (u, b)
 		return x
-		
+	"""
 	# --- From cathesian coordinate to rotation angle ---
-	def calc_angle (self, coord):
+	def calc_angle (self, coord): # coord : [x, y, z]
 		a1 = np.arctan2(coord[1], -coord[2])[0]
 		
 		d2 = np.sum(np.square(coord))
@@ -31,7 +31,23 @@ class Leg:
 		a_aux = np.arccos((self.l1*self.l1 - self.l2*self.l2 + d2)/(2*self.l1*d))
 		a2 = np.arcsin(coord[0]/d)[0] - a_aux
 		return [a1, -a2, -a3]
+	"""
 	
+	# --- From cathesian coordinate to rotation angle ---
+	def calc_angle (self, coord): # coord : [x, y, z]
+		e = 0.02 + 0.098/2
+		theta_1 = np.arccos(e/np.sqrt(coord[1]**2 + coord[2]**2))[0]
+		theta_2 = np.arctan2(coord[1], -coord[2])[0]
+		a1 = np.pi/2 - theta_1 - theta_2
+		
+		d2 = np.sum(np.square(coord) - e**2)
+		d = np.sqrt(d2)
+		a3 = np.pi - np.arccos((self.l1*self.l1 + self.l2*self.l2 - d2)/(2*self.l1*self.l2))
+		
+		a_aux = np.arccos((self.l1*self.l1 - self.l2*self.l2 + d2)/(2*self.l1*d))
+		a2 = np.arcsin(coord[0]/d)[0] - a_aux
+		return [a1, a2, -a3]
+		
 	# --- Creating the work volume ---
 	def create_range (self):
 		zM = -self.l1*2/3
