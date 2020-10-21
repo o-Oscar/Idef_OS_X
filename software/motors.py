@@ -9,6 +9,8 @@ _reduction = [1, 1, 0.8]
 _max_vel = 2
 _origin = None
 
+def get_abs_pos (motor_id):
+	return b.actuator_pos(motor_id)
 
 def check_configuration ():
     for motor_id in _motors_id :

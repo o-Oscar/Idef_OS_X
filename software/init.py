@@ -11,6 +11,8 @@ import kinematics
 import time
 import numpy as np
 """
+
+import motors
 import sys
 import json
 
@@ -19,6 +21,11 @@ def load_motor_pose ():
 		pose = json.loads(''.join(f.readlines()))
 	#print(json.dumps({}))
 	return pose
+
+def save_motor_pose (pose):
+	with open("motor_pose.txt", "w") as f:
+		f.write(json.dumps(pose))
+	
 
 if __name__ == "__main__":
 	if len(sys.argv) < 3:
@@ -32,8 +39,8 @@ if __name__ == "__main__":
 			print(motors_id)
 			motor_pose = load_motor_pose()
 			for id in motors_id:
-				motor_pose[id] = motors.get_pos
-			
+				motor_pose["rest"][id] = motors.get_abs_pos(id)
+			save_motor_pose(motor_pose)
 			
 			
 			
@@ -45,5 +52,11 @@ if __name__ == "__main__":
 		else:
 			motors_id = [int(x) for x in sys.argv[2:]]
 			print(motors_id)
+			motor_pose = load_motor_pose()
+			for id in motors_id:
+				motor_pose["zero"][id] = motors.get_abs_pos(id)
+			save_motor_pose(motor_pose)
 	else:
 		raise NameError("arg not recognized")
+	
+	#print(json.dumps({"zero":{}, "rest":{}}))
