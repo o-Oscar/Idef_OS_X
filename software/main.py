@@ -21,7 +21,7 @@ def calc_motor_targ (start_pos, end_pos, dt, lamb=0.1):
     targ_vel = delta/dt
     return targ_pos, abs(targ_vel)
 
-T = 0.7
+T = 0.4
 def pos_at (t):
 	return [0.5+np.sin(t/T*2*np.pi)*0.4, 0.5, 0.2+np.cos(t/T*2*np.pi)*0.2]
 
