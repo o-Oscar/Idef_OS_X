@@ -65,7 +65,12 @@ if __name__ == "__main__":
 		motors.set_origin_to_real()
 		
 		motors.position_control()
-		
+		#motors.goto([0,0,0])
+		"""
+		for i in range(200000):
+			time.sleep(0.1)
+			print(motors.get_pos())
+		"""
 		# --- going slowly to the starting pos ---
 		start_pos = np.zeros([12])
 		end_pos = start_pos

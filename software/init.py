@@ -40,7 +40,7 @@ if __name__ == "__main__":
 			print(motors_id)
 			motor_pose = load_motor_pose()
 			for id in motors_id:
-				motor_pose["rest"][id] = motors.get_abs_pos(id)
+				motor_pose["rest"][str(id)] = motors.get_abs_pos(id)
 			save_motor_pose(motor_pose)
 			
 			
@@ -56,7 +56,7 @@ if __name__ == "__main__":
 			print(motors_id)
 			motor_pose = load_motor_pose()
 			for id in motors_id:
-				motor_pose["zero"][id] = motors.get_abs_pos(id)
+				motor_pose["zero"][str(id)] = motors.get_abs_pos(id)
 			save_motor_pose(motor_pose)
 	else:
 		raise NameError("arg not recognized")
