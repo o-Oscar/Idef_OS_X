@@ -1,26 +1,51 @@
 """
-TODO :
-- un rapport de réduction (fixé) pour chaque moteur
-"""
-
-"""
 sudo ip link set can0 up type can bitrate 1000000
 cd /home/pi/psc/IDEFX/software
 source activate psc
 python main.py
+
+sudo ip link set can0 down
+sudo ip link set can0 up type can bitrate 1000000
+
+ip -details -statistics link show can0
 """
 
-import motors
-import kinematics
 import time
 import numpy as np
 
-def calc_motor_targ (start_pos, end_pos, dt, lamb=0.1):
-    delta = end_pos-start_pos
-    targ_pos = end_pos + delta*lamb
-    targ_vel = delta/dt
-    return targ_pos, abs(targ_vel)
+from models.actor import SimpleActor, MixtureOfExpert, LSTMActor
+import hardware
 
+if __name__ == "__main__":
+	
+	# actor
+	"""
+	actor_type = "simple"
+	path = "results\\exp_0\\models\\expert\\{}"
+	
+	if actor_type=="mix":
+		primitives = [SimpleActor(env) for i in range(2)]
+		actor = MixtureOfExpert(env, primitives, debug=True)
+	elif actor_type == "simple":
+		actor = SimpleActor(env)
+	elif actor_type == "lstm":
+		actor = LSTMActor(env)
+	
+	actor.load(path)
+	"""
+	
+	input("Enter to start the dog")
+	hardware.startup ()
+	
+	input("Enter to stop the dog")
+	hardware.shutdown ()
+	
+	
+	
+	
+
+
+"""
 T = 0.4
 def pos_at (t):
 	return [0.5+np.sin(t/T*2*np.pi)*0.4, 0.5, 0.2+np.cos(t/T*2*np.pi)*0.2]
@@ -37,23 +62,6 @@ all_target_kin += [(kinematics.motor_pos ([0.5, 0.5, 0] * 4), 1),
 				(np.zeros([12]), 1)]
 
 
-
-"""
-x_start = 1
-x_end = 0.2
-dt = 2
-N = 60
-
-all_target_kin = [(kinematics.motor_pos ([0.5, 0.5, 0] * 4), 1),
-				(kinematics.motor_pos ([x_start, 0.5, 0] * 4), 1)]
-
-for i in range(1, N+1):
-	all_target_kin.append((kinematics.motor_pos ([x_start + i/N*(x_end-x_start), 0.5, 0] * 4), dt/N))
-	
-all_target_kin += [(kinematics.motor_pos ([0.5, 0.5, 0] * 4), 1),
-				(np.zeros([12]), 1)]
-"""
-
 if __name__ == "__main__":
 	
 	if not motors.check_configuration ():
@@ -66,11 +74,6 @@ if __name__ == "__main__":
 		
 		motors.position_control()
 		#motors.goto([0,0,0])
-		"""
-		for i in range(200000):
-			time.sleep(0.1)
-			print(motors.get_pos())
-		"""
 		# --- going slowly to the starting pos ---
 		start_pos = np.zeros([12])
 		end_pos = start_pos
@@ -92,4 +95,4 @@ if __name__ == "__main__":
 			start = time.time()
 		
 		motors.disengage ()
-		
+"""
