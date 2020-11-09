@@ -63,6 +63,10 @@ def actuator_pos (motor_id): # actuator pos in rad nice and clean
     data[0] = 0
     return struct.unpack("<q", data)[0] * 2*np.pi / 2**8 / 36000 / 6
     
+def disengage(motor_id):
+	data = send_command([0x80, 0, 0, 0, 0, 0, 0, 0],motor_id).data # turns the motor off (CONNECTS the motor phases)
+	#data = send_command([0xA1, 0, 0, 0, 0, 0, 0, 0],motor_id).data # set torque to zero (UNPLUGS the motor phases)
+
     
 if __name__ == '__main__':
     
