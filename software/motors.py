@@ -42,6 +42,7 @@ def check_configuration ():
 
 def set_origin_to_real():
 	global _origin
+	print("set_origin_to_real is depreciated : please use config file")
 	if _origin is None:
 		_origin = [0]*_n
 		for i, motor_id in enumerate(_motors_id) :
