@@ -17,8 +17,11 @@ def startup ():
 	global motor_pose 
 	motor_pose = init.load_motor_pose()
 	
+	b.init_bus()
+	
 	if not init.check_start (motors_id, motor_pose):
 		raise NameError("Start position of motor {} is too far from saved rest position. Please re-set rest and zero pose.".format(str(motor_id)))
+	
 	
 	for motor_id in motors_id:
 		b.position_control (motor_pose["zero"][str(motor_id)], 0.5, motor_id)
@@ -28,8 +31,13 @@ def startup ():
 def shutdown ():
 	
 	for motor_id in motors_id:
-		b.position_control (motor_pose["zero"][str(motor_id)], 0.5, motor_id)
-
+		b.position_control (motor_pose["rest"][str(motor_id)], 0.5, motor_id)
+	
+	input ("Enter to finish everything")
+	
+	for motor_id in motors_id:
+		b.turn_off(motor_id)
+	
 def step ():
 	pass
 

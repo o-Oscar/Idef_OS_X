@@ -13,7 +13,7 @@ ip -details -statistics link show can0
 import time
 import numpy as np
 
-from models.actor import SimpleActor, MixtureOfExpert, LSTMActor
+#from models.actor import SimpleActor, MixtureOfExpert, LSTMActor
 import hardware
 
 if __name__ == "__main__":
@@ -34,8 +34,13 @@ if __name__ == "__main__":
 	actor.load(path)
 	"""
 	
+	
 	input("Enter to start the dog")
 	hardware.startup ()
+	
+	input("Enter to go lower")
+	
+	input("Enter to go higher")
 	
 	input("Enter to stop the dog")
 	hardware.shutdown ()

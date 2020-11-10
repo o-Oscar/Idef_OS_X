@@ -27,8 +27,8 @@ def save_motor_pose (pose):
 
 def check_start (all_motor_id, motor_pose):
 	for motor_id in all_motor_id:
-		start_position = b.actuator_pos(motor_id))
-		if abs(start_position - motor_pose["rest"][str(motor_id)]) > 3.14/6/10:
+		start_position = b.actuator_pos(motor_id)
+		if abs(start_position - motor_pose["rest"][str(motor_id)]) > 3.14/6/1:
 			return False
 	return True
 
@@ -39,7 +39,7 @@ if __name__ == "__main__":
 		
 		b.init_bus ()
 		
-		choosen_motors_id = [int(x) for x in sys.argv[2:]]
+		all_motor_id = [int(x) for x in sys.argv[2:]]
 		motor_pose = load_motor_pose()
 		
 		# choosing the rest pose
@@ -48,7 +48,7 @@ if __name__ == "__main__":
 		
 		
 		input("Put motors {} at their rest position.".format(all_motor_id))
-		for motor_id in choosen_motors_id:
+		for motor_id in all_motor_id:
 			motor_pose["rest"][str(motor_id)] = b.actuator_pos(motor_id)
 		
 		input("Put motors {} at their zero position.".format(all_motor_id))
@@ -88,7 +88,7 @@ if __name__ == "__main__":
 		for motor_id in all_motor_id:
 			b.position_control (motor_pose["rest"][str(motor_id)], 0.5, motor_id)
 		
-		input("Enter to go to rest pose.")
+		input("Enter to turn the motors off.")
 		for motor_id in all_motor_id:
 			b.turn_off(motor_id)
 	
