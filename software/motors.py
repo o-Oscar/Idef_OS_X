@@ -27,11 +27,15 @@ def check_configuration ():
 		raise NameError("Start position of motor {} is too far from saved rest position. Please re-set rest and zero pose.".format(str(motor_id)))
 		return False
 		
+	for motor_id in 
+		
 	_origin = [0]*_n
 	_rest_pos = [0]*_n
 	for i, motor_id in enumerate(_motors_id) :
 		_origin[i] = _motor_pose["zero"][str(motor_id)]
 		_rest_pos[i] = _motor_pose["rest"][str(motor_id)]
+		# set PID : angle_kp, angle_ki, speed_kp, speed_ki, current_kp, current_ki
+		b.send_command([0xA4, 0, 100, 100, 50, 40, 50, 50], motor_id)
 	"""
 	for motor_id in _motors_id:
 		b.position_control (_origin[i], 0.5, motor_id)
