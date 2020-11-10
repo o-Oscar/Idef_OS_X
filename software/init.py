@@ -58,12 +58,12 @@ if __name__ == "__main__":
 		save_motor_pose(motor_pose)
 		
 		for motor_id in all_motor_id:
-			b.position_control (motor_pose["zero"][str(motor_id)], 0.5, motor_id)
+			b.position_control (motor_id, motor_pose["zero"][str(motor_id)], 0.5)
 		
 		input("Get your hands away from the robot.")
 		
 		for motor_id in all_motor_id:
-			b.position_control (motor_pose["rest"][str(motor_id)], 0.5, motor_id)
+			b.position_control (motor_id, motor_pose["rest"][str(motor_id)], 0.5)
 		
 		input("Enter to go back to rest.")
 		
@@ -82,11 +82,11 @@ if __name__ == "__main__":
 		
 		input("Enter to go to zero pose.")
 		for motor_id in all_motor_id:
-			b.position_control (motor_pose["zero"][str(motor_id)], 0.5, motor_id)
+			b.position_control (motor_id, motor_pose["zero"][str(motor_id)], 0.5)
 		
 		input("Enter to go to rest pose.")
 		for motor_id in all_motor_id:
-			b.position_control (motor_pose["rest"][str(motor_id)], 0.5, motor_id)
+			b.position_control (motor_id, motor_pose["rest"][str(motor_id)], 0.5)
 		
 		input("Enter to turn the motors off.")
 		for motor_id in all_motor_id:

@@ -33,11 +33,8 @@ def check_configuration ():
 		_origin[i] = _motor_pose["zero"][str(motor_id)]
 		_rest_pos[i] = _motor_pose["rest"][str(motor_id)]
 		# set PID : angle_kp, angle_ki, speed_kp, speed_ki, current_kp, current_ki
-		b.send_command([0x31, 0, 100, 100, 50, 40, 50, 50], motor_id)
-	"""
-	for motor_id in _motors_id:
-		b.position_control (_origin[i], 0.5, motor_id)
-	"""
+		b.set_pid(motor_id, 100, 100, 50, 40, 50, 50)
+		
 	return True
 
 
@@ -76,11 +73,11 @@ def goto(targ_pos, targ_vel=[_max_vel]*_n, epsilon=0.5):
 		_targ_pos = targ_pos
 		
 		for motor_id, pos, vel, ori, red in zip (_motors_id, targ_pos, targ_vel, _origin, _reduction) :
-			b.position_control (red*pos + ori, red*vel, motor_id)
+			b.position_control (motor_id, red*pos + ori, red*vel)
 
 def goto_rest ():
 	for motor_id, pos in zip (_motors_id, _rest_pos) :
-		b.position_control (pos, 0.5, motor_id)
+		b.position_control (motor_id, pos, 0.5)
 
 def reached_target():
 	if _epsilon is None or _targ_pos is None or _origin is None:
