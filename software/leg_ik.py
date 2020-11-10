@@ -3,8 +3,8 @@ import numpy as np
 
 class Leg:
 	def __init__ (self, inv_elbow=False, inv_1=False, inv_2=False, inv_3=False):
-		self.l1 = 0.2 #0.195
-		self.l2 = 0.200
+		self.l1 = 0.196
+		self.l2 = 0.180
 		self.create_range ()
 		
 		self.fac_1 = -1 if inv_1 else 1

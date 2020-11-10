@@ -3,7 +3,7 @@ from leg_ik import Leg
 import numpy as np
 
 all_legs = [Leg(inv_elbow=True),
-			Leg(),
+			Leg(inv_elbow=True),
 			Leg(),
 			Leg()]
 			

@@ -14,8 +14,13 @@ import time
 import numpy as np
 
 #from models.actor import SimpleActor, MixtureOfExpert, LSTMActor
-#import motors
+import motors
 import kinematics
+
+up_pose = kinematics.motor_pos ([0.5, 0.5, 1] * 4)
+down_pose = kinematics.motor_pos ([0.5, 0.5, 0] * 4)
+dt = 1
+trans_speed = np.abs((up_pose-down_pose)/dt)
 
 if __name__ == "__main__":
 	
@@ -35,21 +40,23 @@ if __name__ == "__main__":
 	actor.load(path)
 	"""
 	
-	print (kinematics.motor_pos([0.5, 0.5, 1]*4))
+	#print (kinematics.motor_pos([0.5, 0.5, 1]*4))
 	
-	"""
+	
 	motors.check_configuration ()
 	input("Enter to start the dog")
-	motors.goto (kinematics.motor_pos ([0.5, 0.5, 0.5] * 4)* 0.1)
-	input("Enter to go lower")
-	motors.goto (kinematics.motor_pos ([0.5, 0.5, 0.4] * 4)* 0.1)
-	input("Enter to go higher")
-	motors.goto (kinematics.motor_pos ([0.5, 0.5, 0.6] * 4)* 0.1)
+	motors.goto (kinematics.motor_pos ([0.5, 0.5, 1] * 4)* 1)
+	#smotors.goto ([0, np.pi/4, 3*np.pi/4])
+	input("Enter to start the dog")
+	motors.goto (kinematics.motor_pos ([0.5, 0.5, 0] * 4)* 1, targ_vel=trans_speed)
+	input("Enter to start the dog")
+	motors.goto (kinematics.motor_pos ([0.5, 0.5, 1] * 4)* 1, targ_vel=trans_speed)
 	input("Enter to go to rest pose")
 	motors.goto_rest ()
 	input("Enter to stop the dog")
 	motors.disengage ()
-	"""
+	
+	
 	
 	
 	
