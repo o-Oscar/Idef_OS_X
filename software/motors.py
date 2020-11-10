@@ -6,9 +6,9 @@ import init
 
 
 _epsilon = None
-_motors_id = [6] # [1,2,3,4,5,6,7,8,9,10,11,12]
+_motors_id = [1, 2, 3] # [1,2,3,4,5,6,7,8,9,10,11,12]
 _n = len(_motors_id) #nombre de moteurs
-_reduction = [1] # [1, 1, 30/24] * 4
+_reduction = [1, 1, 30/24] # [1, 1, 30/24] * 4
 _max_vel = 0.5
 _origin = None
 _rest_pos = None
@@ -34,7 +34,7 @@ def check_configuration ():
 		_origin[i] = _motor_pose["zero"][str(motor_id)]
 		_rest_pos[i] = _motor_pose["rest"][str(motor_id)]
 		# set PID : angle_kp, angle_ki, speed_kp, speed_ki, current_kp, current_ki
-		b.set_pid(motor_id, 100, 100, 50, 40, 50, 50)
+		b.set_pid(motor_id, 100, 0, 50, 0, 50, 50)
 		
 	return True
 

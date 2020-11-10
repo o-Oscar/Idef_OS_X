@@ -34,25 +34,22 @@ if __name__ == "__main__":
 	
 	actor.load(path)
 	"""
+	
+	print (kinematics.motor_pos([0.5, 0.5, 1]*4))
+	
+	"""
 	motors.check_configuration ()
-	
-	
 	input("Enter to start the dog")
 	motors.goto (kinematics.motor_pos ([0.5, 0.5, 0.5] * 4)* 0.1)
-	"""
 	input("Enter to go lower")
-	motors.goto (kinematics.motor_pos ([0.5, 0.5, 0.6] * 4)* 0.1)
-	
-	input("Enter to go higher")
 	motors.goto (kinematics.motor_pos ([0.5, 0.5, 0.4] * 4)* 0.1)
-	"""
-	
+	input("Enter to go higher")
+	motors.goto (kinematics.motor_pos ([0.5, 0.5, 0.6] * 4)* 0.1)
 	input("Enter to go to rest pose")
 	motors.goto_rest ()
-	
 	input("Enter to stop the dog")
 	motors.disengage ()
-	
+	"""
 	
 	
 	

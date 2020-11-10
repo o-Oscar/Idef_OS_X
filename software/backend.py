@@ -51,7 +51,7 @@ def position_control(motor_id, rad_pos, rad_speed) : #position : rad ; speed : r
 
 def set_pid (motor_id, angle_kp, angle_ki, speed_kp, speed_ki, current_kp, current_ki):
 	# set PID : angle_kp, angle_ki, speed_kp, speed_ki, current_kp, current_ki
-	b.send_command([0x31, 0, angle_kp, angle_ki, speed_kp, speed_ki, current_kp, current_ki], motor_id)
+	send_command([0x31, 0, angle_kp, angle_ki, speed_kp, speed_ki, current_kp, current_ki], motor_id)
 
 """
 # DEPRECIATED

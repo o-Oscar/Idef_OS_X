@@ -2,13 +2,22 @@
 import numpy as np
 
 class Leg:
-	def __init__ (self):
-		self.l1 = 0.19
-		self.l2 = 0.179
+	def __init__ (self, inv_elbow=False, inv_1=False, inv_2=False, inv_3=False):
+		self.l1 = 0.2 #0.195
+		self.l2 = 0.200
 		self.create_range ()
+		
+		self.fac_1 = -1 if inv_1 else 1
+		self.fac_2 = -1 if inv_2 else 1
+		self.fac_3 = -1 if inv_3 else 1
+		
+		self.elbow_fac = -1 if inv_elbow else 1
+		
 	
 	def motor_pos (self, action):
+		print(action)
 		foot_coord = self.calc_coord(action)
+		print(foot_coord)
 		motor_angle = self.calc_angle(foot_coord)
 		return motor_angle
 	
@@ -35,6 +44,9 @@ class Leg:
 	
 	# --- From cathesian coordinate to rotation angle ---
 	def calc_angle (self, coord): # coord : [x, y, z]
+		# inv_elbow trick :
+		coord[0] *= self.elbow_fac
+		
 		e = 0.02 + 0.098/2
 		theta_1 = np.arccos(e/np.sqrt(coord[1]**2 + coord[2]**2))[0]
 		theta_2 = np.arctan2(coord[1], -coord[2])[0]
@@ -46,16 +58,22 @@ class Leg:
 		
 		a_aux = np.arccos((self.l1*self.l1 - self.l2*self.l2 + d2)/(2*self.l1*d))
 		a2 = np.arcsin(coord[0]/d)[0] - a_aux
+		
+		# inv calculations
+		a1 = a1*self.fac_1
+		a2 = a2*self.fac_2*self.elbow_fac
+		a3 = a3*self.fac_3*self.elbow_fac
+		
 		return [a1, a2, -a3]
 		
 	# --- Creating the work volume ---
 	def create_range (self):
-		zM = -self.l1*2/3
+		zM = -self.l1
 		ym = 0.1
 		l = self.l1+self.l2-0.01
-		xm = 0.17
-		zm = -np.sqrt(l*l-xm*xm-ym*ym)
-		xM = np.sqrt(l*l-ym*ym-zM*zM)
+		xm = 0.1
+		zm = zM - 0.1 #-np.sqrt(l*l-xm*xm-ym*ym)
+		xM = xm #np.sqrt(l*l-ym*ym-zM*zM)
 		
 		umx, bmx = self.face_from_point([-xm, -ym, zm], [-xm, ym, zm], [-xM, ym, zM])
 		uMx, bMx = self.face_from_point([xm, -ym, zm], [xm, ym, zm], [xM, ym, zM])
@@ -79,5 +97,6 @@ class Leg:
 		v1 = p1-p2
 		v2 = p3-p2
 		u = np.cross(v1,v2)
+		u /= np.sum(u)
 		b = np.sum(p2*u)
 		return u, b
