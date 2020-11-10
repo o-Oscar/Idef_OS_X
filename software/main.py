@@ -14,7 +14,8 @@ import time
 import numpy as np
 
 #from models.actor import SimpleActor, MixtureOfExpert, LSTMActor
-import hardware
+import motors
+import kinematics
 
 if __name__ == "__main__":
 	
@@ -33,17 +34,24 @@ if __name__ == "__main__":
 	
 	actor.load(path)
 	"""
+	motors.check_configuration ()
 	
 	
 	input("Enter to start the dog")
-	hardware.startup ()
-	
+	motors.goto (kinematics.motor_pos ([0.5, 0.5, 0.5] * 4)* 0.1)
+	"""
 	input("Enter to go lower")
+	motors.goto (kinematics.motor_pos ([0.5, 0.5, 0.6] * 4)* 0.1)
 	
 	input("Enter to go higher")
+	motors.goto (kinematics.motor_pos ([0.5, 0.5, 0.4] * 4)* 0.1)
+	"""
+	
+	input("Enter to go to rest pose")
+	motors.goto_rest ()
 	
 	input("Enter to stop the dog")
-	hardware.shutdown ()
+	motors.disengage ()
 	
 	
 	

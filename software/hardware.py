@@ -37,7 +37,10 @@ def shutdown ():
 	
 	for motor_id in motors_id:
 		b.turn_off(motor_id)
-	
+
+
+
+
 def step ():
 	pass
 

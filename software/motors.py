@@ -2,44 +2,45 @@ import backend as b
 import time
 import json
 import sys
+import init
 
 
 _epsilon = None
-_n = 3 #nombre de moteurs
-_motors_id = [1, 2, 3] # [1,2,3,4,5,6,7,8,9,10,11,12]
-_reduction = [1, 1, 0.8]
+_motors_id = [1,2,3,4,5,6,7,8,9,10,11,12]
+_n = len(_motors_id) #nombre de moteurs
+_reduction = [1, 1, 30/24] * 4
 _max_vel = 0.5
 _origin = None
 _rest_pos = None
+_motor_pose = None
 
 
-def load_motor_pose ():
-	global _saved_pose
+def check_configuration ():
+	global _motor_pose
 	global _origin
 	global _rest_pos
-	with open("motor_pose.txt") as f:
-		_saved_pose = json.loads(''.join(f.readlines()))
+	
+	_motor_pose = init.load_motor_pose()
+	b.init_bus()
+	
+	if not init.check_start (_motors_id, _motor_pose):
+		raise NameError("Start position of motor {} is too far from saved rest position. Please re-set rest and zero pose.".format(str(motor_id)))
+		return False
+		
 	_origin = [0]*_n
 	_rest_pos = [0]*_n
 	for i, motor_id in enumerate(_motors_id) :
-		_origin[i] = _saved_pose["zero"][str(motor_id)]
-		_rest_pos[i] = _saved_pose["rest"][str(motor_id)]
-	print(_origin)
-	print(_rest_pos)
-	
-def save_motor_pose ():
-	global _saved_pose
-	with open("motor_pose.txt", "w") as f:
-		f.write(json.dumps(_saved_pose))
-
-def check_configuration ():
-	for motor_id in _motors_id :
-		pass
-	b.init_bus()
-	#load_motor_pose()
+		_origin[i] = _motor_pose["zero"][str(motor_id)]
+		_rest_pos[i] = _motor_pose["rest"][str(motor_id)]
+	"""
+	for motor_id in _motors_id:
+		b.position_control (_origin[i], 0.5, motor_id)
+	"""
 	return True
 
 
+"""
+# DEPRECIATED
 def set_origin_to_real():
 	global _origin
 	print("set_origin_to_real is depreciated : please use config file")
@@ -49,14 +50,16 @@ def set_origin_to_real():
 			_origin[i] = b.actuator_pos(motor_id)
 	else :
 		raise ErrorName("origin already defined")
-
+"""
 	
 
+"""
+# Unused
 def position_control():
 	vmax = 1
 	for motor_id, red in zip (_motors_id, _reduction):
 		b.position_control(b.actuator_pos(motor_id), vmax, motor_id)
-		
+"""	
 
 
 
@@ -85,19 +88,13 @@ def reached_target():
 		res = res and ((abs(red*pos + ori - b.actuator_pos(motor_id))) < _epsilon)
 	return res
 
-def get_pos ():
+def get_abs_pos ():
 	to_return = []
 	for motor_id in _motors_id:
 		to_return.append(b.actuator_pos(motor_id))
 	return to_return
 
-def disengage():
-	for motor_id in _motors_id :
-		data = b.send_command([0x80, 0, 0, 0, 0, 0, 0, 0],motor_id).data # turns the motor off (CONNECTS the motor phases)
-		#data = b.send_command([0xA1, 0, 0, 0, 0, 0, 0, 0],motor_id).data # set torque to zero (UNPLUGS the motor phases)
-
-
-def all_actuator_pos() :
+def get_pos () :
 	if _origin is None :
 		raise ErrorName("origin non defined")
 
@@ -106,6 +103,12 @@ def all_actuator_pos() :
 		for motor_id, ori, red in zip (_motor_id, _origin, _reduction):
 			position.append((b.actuator_pos(motor_id) - ori)/red)
 		return(position)
+
+
+def disengage():
+	for motor_id in _motors_id :
+		b.turn_off(motor_id)
+
 
 
 
