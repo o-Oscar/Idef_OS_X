@@ -14,7 +14,7 @@ import time
 import numpy as np
 
 #from models.actor import SimpleActor, MixtureOfExpert, LSTMActor
-import motors
+#import motors
 import kinematics
 
 if __name__ == "__main__":

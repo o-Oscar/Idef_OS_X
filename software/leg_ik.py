@@ -15,10 +15,8 @@ class Leg:
 		
 	
 	def motor_pos (self, action):
-		print(action)
 		foot_coord = self.calc_coord(action)
-		print(foot_coord)
-		motor_angle = self.calc_angle(foot_coord)
+		motor_angle = self.calc_angle(foot_coord[:,0])
 		return motor_angle
 	
 	# --- From raw action to cathesian coordinate ---
@@ -48,16 +46,17 @@ class Leg:
 		coord[0] *= self.elbow_fac
 		
 		e = 0.02 + 0.098/2
-		theta_1 = np.arccos(e/np.sqrt(coord[1]**2 + coord[2]**2))[0]
-		theta_2 = np.arctan2(coord[1], -coord[2])[0]
+		lpx = np.sqrt(coord[1]**2 + coord[2]**2 - e**2)
+		theta_1 = np.arctan2(lpx, e)
+		theta_2 = np.arctan2(coord[1], -coord[2])
 		a1 = np.pi/2 - theta_1 - theta_2
 		
-		d2 = np.sum(np.square(coord) - e**2)
+		d2 = lpx**2 + coord[0]**2
 		d = np.sqrt(d2)
 		a3 = np.pi - np.arccos((self.l1*self.l1 + self.l2*self.l2 - d2)/(2*self.l1*self.l2))
 		
 		a_aux = np.arccos((self.l1*self.l1 - self.l2*self.l2 + d2)/(2*self.l1*d))
-		a2 = np.arcsin(coord[0]/d)[0] - a_aux
+		a2 = np.arcsin(coord[0]/d) - a_aux
 		
 		# inv calculations
 		a1 = a1*self.fac_1
@@ -70,7 +69,7 @@ class Leg:
 	def create_range (self):
 		zM = -self.l1
 		ym = 0.1
-		l = self.l1+self.l2-0.01
+		l = self.l1+self.l2 # -0.01
 		xm = 0.1
 		zm = zM - 0.1 #-np.sqrt(l*l-xm*xm-ym*ym)
 		xM = xm #np.sqrt(l*l-ym*ym-zM*zM)
@@ -80,6 +79,9 @@ class Leg:
 		
 		umy, bmy = self.face_from_point([-xm, -ym, zm], [xm, -ym, zm], [xm, -ym, zM])
 		uMy, bMy = self.face_from_point([-xm, ym, zm], [xm, ym, zm], [xm, ym, zM])
+		
+		bmy += 0.02 + 0.098/2
+		bMy += 0.02 + 0.098/2
 		
 		umz, bmz = self.face_from_point([-xm, ym, zm], [xm, ym, zm], [xm, -ym, zm])
 		uMz, bMz = self.face_from_point([-xm, ym, zM], [xm, ym, zM], [xm, -ym, zM])
