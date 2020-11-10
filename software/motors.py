@@ -6,13 +6,14 @@ import init
 
 
 _epsilon = None
-_motors_id = [1,2,3,4,5,6,7,8,9,10,11,12]
+_motors_id = [6] # [1,2,3,4,5,6,7,8,9,10,11,12]
 _n = len(_motors_id) #nombre de moteurs
-_reduction = [1, 1, 30/24] * 4
+_reduction = [1] # [1, 1, 30/24] * 4
 _max_vel = 0.5
 _origin = None
 _rest_pos = None
 _motor_pose = None
+
 
 
 def check_configuration ():
