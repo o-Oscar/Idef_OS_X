@@ -42,11 +42,12 @@ def send_command(command, motor_id) :
 
 def position_control(motor_id, rad_pos, rad_speed) : #position : rad ; speed : rad.s-1
 	motor_pos = int(rad_pos * 36000 / (2*np.pi) * 6)
-	motor_speed= int(rad_speed * 360 / (2*np.pi) * 6)
+	motor_speed= min(1000, int(rad_speed * 360 / (2*np.pi) * 6))
 	
 	bytes_pos = motor_pos.to_bytes(4, byteorder="little", signed=True)
 	bytes_speed = motor_speed.to_bytes (2, byteorder="little", signed=True)
-	
+	#sprint(motor_speed)
+    
 	data = send_command([0xA4, 0, bytes_speed[0], bytes_speed[1], bytes_pos[0], bytes_pos[1], bytes_pos[2], bytes_pos[3]],motor_id).data
 
 def set_pid (motor_id, angle_kp, angle_ki, speed_kp, speed_ki, current_kp, current_ki):

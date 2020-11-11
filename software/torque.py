@@ -19,9 +19,8 @@ import kinematics
 
 up_pose = kinematics.motor_pos ([0.5, 0.5, 1] * 4)
 down_pose = kinematics.motor_pos ([0.5, 0.5, 0] * 4)
-dt = 0.2
+dt = 1
 trans_speed = np.abs((up_pose-down_pose)/dt)
-print (trans_speed)
 
 if __name__ == "__main__":
 	
@@ -45,16 +44,6 @@ if __name__ == "__main__":
 	
 	
 	motors.check_configuration ()
-	
-	input("Enter to start the dog")
-	motors.goto (kinematics.motor_pos ([0.5, 0.5, 0] * 4)* 1)
-	input("Enter to start the dog")
-	motors.goto (kinematics.motor_pos ([0.5, 0.5, 0] * 4)* 1, targ_vel=trans_speed)
-	input("Enter to start the dog")
-	motors.goto (kinematics.motor_pos ([0.5, 0.5, 1] * 4)* 1, targ_vel=trans_speed)
-	input("Enter to start the dog")
-	motors.goto (kinematics.motor_pos ([0.5, 0.5, 0] * 4)* 1, targ_vel=trans_speed)
-	input("Enter to go to rest pose")
 	
 	motors.goto_rest ()
 	input("Enter to stop the dog")

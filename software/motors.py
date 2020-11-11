@@ -6,9 +6,9 @@ import init
 
 
 _epsilon = None
-_motors_id = [1, 2, 3, 10, 11, 12] # [1,2,3,4,5,6,7,8,9,10,11,12]
+_motors_id = [1,2,3,4,5,6,7,8,9,10,11,12]
 _n = len(_motors_id) #nombre de moteurs
-_reduction = [1, 1, 24/30]*2 # [1, 1, 30/24] * 4
+_reduction = [1, 1, 24/30] * 4
 _max_vel = 0.5
 _origin = None
 _rest_pos = None
@@ -25,9 +25,9 @@ def check_configuration ():
 	b.init_bus()
 	
 	if not init.check_start (_motors_id, _motor_pose):
-		raise NameError("Start position of motor {} is too far from saved rest position. Please re-set rest and zero pose.".format(str(motor_id)))
+		raise NameError("Start position of motor {} is too far from saved rest position. Please re-set rest and zero pose.".format(str(_motors_id)))
 		return False
-    
+	
 	_origin = [0]*_n
 	_rest_pos = [0]*_n
 	for i, motor_id in enumerate(_motors_id) :
@@ -77,8 +77,11 @@ def goto(targ_pos, targ_vel=[_max_vel]*_n, epsilon=0.5):
 			b.position_control (motor_id, red*pos + ori, red*vel)
 
 def goto_rest ():
-	for motor_id, pos in zip (_motors_id, _rest_pos) :
-		b.position_control (motor_id, pos, 0.5)
+	dt = 2
+	for motor_id, targ_pos in zip (_motors_id, _rest_pos) :
+		cur_pos = b.actuator_pos(motor_id)
+		speed = max((1, abs(cur_pos-targ_pos)/dt))
+		b.position_control (motor_id, targ_pos, speed)
 
 def reached_target():
 	if _epsilon is None or _targ_pos is None or _origin is None:

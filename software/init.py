@@ -28,7 +28,10 @@ def save_motor_pose (pose):
 def check_start (all_motor_id, motor_pose):
 	for motor_id in all_motor_id:
 		start_position = b.actuator_pos(motor_id)
+		#print(start_position)
+		#print(motor_pose["rest"][str(motor_id)])
 		if abs(start_position - motor_pose["rest"][str(motor_id)]) > 3.14/6/1:
+			print(motor_id)
 			return False
 	return True
 
