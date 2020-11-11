@@ -17,11 +17,15 @@ import numpy as np
 import motors
 import kinematics
 
-up_pose = kinematics.motor_pos ([0.5, 0.5, 1] * 4)
-down_pose = kinematics.motor_pos ([0.5, 0.5, 0] * 4)
-dt = 0.2
-trans_speed = np.abs((up_pose-down_pose)/dt)
-print (trans_speed)
+#up_pose = kinematics.motor_pos ([0.5, 0.5, 0.5] * 4)
+#down_pose = kinematics.motor_pos ([0.5, 0.4, 0.5] * 4)
+#trans_speed = np.abs((up_pose-down_pose)/dt)
+
+def action_at_speed (act, dt=1):
+	cur_pose = np.asarray(motors.get_pos())
+	targ_pose = kinematics.motor_pos (act)
+	speed = np.minimum(np.abs((targ_pose-cur_pose)/dt), 5)
+	motors.goto (targ_pose, targ_vel=speed)
 
 if __name__ == "__main__":
 	
@@ -47,15 +51,15 @@ if __name__ == "__main__":
 	motors.check_configuration ()
 	
 	input("Enter to start the dog")
-	motors.goto (kinematics.motor_pos ([0.5, 0.5, 0] * 4)* 1)
+	action_at_speed([0.5, 0.5, 0.5] * 4)
 	input("Enter to start the dog")
-	motors.goto (kinematics.motor_pos ([0.5, 0.5, 0] * 4)* 1, targ_vel=trans_speed)
+	action_at_speed([0.5, 0.5, 0.] * 4)
 	input("Enter to start the dog")
-	motors.goto (kinematics.motor_pos ([0.5, 0.5, 1] * 4)* 1, targ_vel=trans_speed)
+	action_at_speed([0.5, 0.5, 1] * 4)
 	input("Enter to start the dog")
-	motors.goto (kinematics.motor_pos ([0.5, 0.5, 0] * 4)* 1, targ_vel=trans_speed)
-	input("Enter to go to rest pose")
+	action_at_speed([0.5, 0.5, 0.5] * 4)
 	
+	input("Enter to go to rest")
 	motors.goto_rest ()
 	input("Enter to stop the dog")
 	motors.disengage ()

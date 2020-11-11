@@ -34,7 +34,7 @@ def check_configuration ():
 		_origin[i] = _motor_pose["zero"][str(motor_id)]
 		_rest_pos[i] = _motor_pose["rest"][str(motor_id)]
 		# set PID : angle_kp, angle_ki, speed_kp, speed_ki, current_kp, current_ki
-		b.set_pid(motor_id, 100, 0, 50, 0, 50, 50)
+		b.set_pid(motor_id, 100, 0, 50, 40, 50, 50)
 		
 	return True
 
@@ -80,7 +80,7 @@ def goto_rest ():
 	dt = 2
 	for motor_id, targ_pos in zip (_motors_id, _rest_pos) :
 		cur_pos = b.actuator_pos(motor_id)
-		speed = max((1, abs(cur_pos-targ_pos)/dt))
+		speed = max((0.01, abs(cur_pos-targ_pos)/dt))
 		b.position_control (motor_id, targ_pos, speed)
 
 def reached_target():
@@ -103,7 +103,7 @@ def get_pos () :
 
 	else :
 		position = []
-		for motor_id, ori, red in zip (_motor_id, _origin, _reduction):
+		for motor_id, ori, red in zip (_motors_id, _origin, _reduction):
 			position.append((b.actuator_pos(motor_id) - ori)/red)
 		return(position)
 

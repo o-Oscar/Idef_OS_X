@@ -2,10 +2,10 @@
 from leg_ik import Leg
 import numpy as np
 
-all_legs = [Leg(inv_elbow=True),
-			Leg(inv_elbow=False),
-			Leg(inv_elbow=False),
-			Leg(inv_elbow=True)]
+all_legs = [Leg(inv_x=True, inv_2=True, inv_3=True),
+			Leg(inv_x=True, inv_y=True, inv_1=True),
+			Leg(inv_1=True),
+			Leg(inv_y=True, inv_2=True, inv_3=True)]
 			
 
 

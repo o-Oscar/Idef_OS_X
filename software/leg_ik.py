@@ -2,17 +2,19 @@
 import numpy as np
 
 class Leg:
-	def __init__ (self, inv_elbow=False, inv_1=False, inv_2=False, inv_3=False):
+	def __init__ (self, inv_x=False, inv_y=False, inv_1=False, inv_2=False, inv_3=False):
 		self.l1 = 0.196
 		self.l2 = 0.180
-		self.create_range ()
+		self.e = 0.02 + 0.098/2
 		
 		self.fac_1 = -1 if inv_1 else 1
 		self.fac_2 = -1 if inv_2 else 1
 		self.fac_3 = -1 if inv_3 else 1
 		
-		self.elbow_fac = -1 if inv_elbow else 1
+		self.fac_x = -1 if inv_x else 1
+		self.fac_y = -1 if inv_y else 1
 		
+		self.create_range ()
 	
 	def motor_pos (self, action):
 		foot_coord = self.calc_coord(action)
@@ -42,12 +44,11 @@ class Leg:
 	
 	# --- From cathesian coordinate to rotation angle ---
 	def calc_angle (self, coord): # coord : [x, y, z]
-		# inv_elbow trick :
-		coord[0] *= self.elbow_fac
+		coord[0] *= self.fac_x
+		coord[1] *= self.fac_y
 		
-		e = 0.02 + 0.098/2
-		lpx = np.sqrt(coord[1]**2 + coord[2]**2 - e**2)
-		theta_1 = np.arctan2(lpx, e)
+		lpx = np.sqrt(coord[1]**2 + coord[2]**2 - self.e**2)
+		theta_1 = np.arctan2(lpx, self.e)
 		theta_2 = np.arctan2(coord[1], -coord[2])
 		a1 = np.pi/2 - theta_1 - theta_2
 		
@@ -60,8 +61,8 @@ class Leg:
 		
 		# inv calculations
 		a1 = a1*self.fac_1
-		a2 = a2*self.fac_2*self.elbow_fac
-		a3 = a3*self.fac_3*self.elbow_fac
+		a2 = a2*self.fac_2
+		a3 = a3*self.fac_3
 		
 		return [a1, a2, -a3]
 		
@@ -80,8 +81,8 @@ class Leg:
 		umy, bmy = self.face_from_point([-xm, -ym, zm], [xm, -ym, zm], [xm, -ym, zM])
 		uMy, bMy = self.face_from_point([-xm, ym, zm], [xm, ym, zm], [xm, ym, zM])
 		
-		bmy += 0.02 + 0.098/2
-		bMy += 0.02 + 0.098/2
+		bmy += self.e*self.fac_y
+		bMy += self.e*self.fac_y
 		
 		umz, bmz = self.face_from_point([-xm, ym, zm], [xm, ym, zm], [xm, -ym, zm])
 		uMz, bMz = self.face_from_point([-xm, ym, zM], [xm, ym, zM], [xm, -ym, zM])
