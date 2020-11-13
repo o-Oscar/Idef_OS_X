@@ -9,10 +9,43 @@ for i in range(4):
 	print(bin(s[i]))
 
 """
+
+ser = serial.Serial('/dev/ttyUSB0', 9600, timeout=3)
+
+skipped_nb = 0
+dumped_nb = 0
+
+v_rot = np.asarray([0, 0, 0])
+up_vect = np.asarray([0, 0, 1])
+
+def read_float():
+	s = ser.read(4)
+	return struct.unpack('f', s)[0]
+
+def read_imu ():
+	global skipped_nb
+	global dumped_nb
+	
+	waiting_byte = ser.inWaiting()
+	skipped_nb = waiting_byte - waiting_byte%(4*6+1)
+	ser.read(skipped_nb)
+	
+	#ser.flushInput()
+	x = ser.read()
+	dumped_nb = 0
+	while not x == b'f':
+		x = ser.read()
+		dumped_nb += 1
+	
+	v_rot = np.asarray([read_float() for i in range(3)])
+	up_vect = np.asarray([read_float() for i in range(3)])
+		
+	
+	
+
+
 if __name__ == "__main__":
 	with serial.Serial('/dev/ttyUSB0', 9600, timeout=3) as ser:
-		for i in range(100):
-			print(ser.read())
 		
 		all_data = []
 		
