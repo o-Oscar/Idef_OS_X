@@ -51,13 +51,7 @@ if __name__ == "__main__":
 	motors.check_configuration ()
 	
 	input("Enter to start the dog")
-	action_at_speed([0.5, 0.5, 0.5] * 4)
-	input("Enter to start the dog")
 	action_at_speed([0.5, 0.5, 0.] * 4)
-	input("Enter to start the dog")
-	action_at_speed([0.5, 0.5, 1] * 4)
-	input("Enter to start the dog")
-	action_at_speed([0.5, 0.5, 0.5] * 4)
 	
 	input("Enter to go to rest")
 	motors.goto_rest ()

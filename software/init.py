@@ -28,9 +28,9 @@ def save_motor_pose (pose):
 def check_start (all_motor_id, motor_pose):
 	for motor_id in all_motor_id:
 		start_position = b.actuator_pos(motor_id)
-		#print(start_position)
-		#print(motor_pose["rest"][str(motor_id)])
 		if abs(start_position - motor_pose["rest"][str(motor_id)]) > 3.14/6/1:
+			print("start position :", start_position)
+			print("rest position :", motor_pose["rest"][str(motor_id)])
 			print(motor_id)
 			return False
 	return True
@@ -81,7 +81,7 @@ if __name__ == "__main__":
 		motor_pose = load_motor_pose()
 		
 		if not check_start(all_motor_id, motor_pose):
-			raise NameError("Start position of motor {} is too far from saved rest position. Please re-set rest and zero pose.".format(str(motor_id)))
+			raise NameError("Start position of motor are too far from saved rest position. Please re-set rest and zero pose.")
 		
 		input("Enter to go to zero pose.")
 		for motor_id in all_motor_id:

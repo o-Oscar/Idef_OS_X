@@ -1,6 +1,6 @@
 import serial
 import struct
-import matplotlib.pyplot as plt
+#import matplotlib.pyplot as plt
 import numpy as np
 import time
 """
@@ -10,7 +10,9 @@ for i in range(4):
 
 """
 if __name__ == "__main__":
-	with serial.Serial('COM4', 9600, timeout=3) as ser:
+	with serial.Serial('/dev/ttyUSB0', 9600, timeout=3) as ser:
+		for i in range(100):
+			print(ser.read())
 		
 		all_data = []
 		
