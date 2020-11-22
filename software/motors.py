@@ -97,15 +97,22 @@ def get_abs_pos ():
 		to_return.append(b.actuator_pos(motor_id))
 	return to_return
 
-def get_pos () :
+last_fetched_actuator_pos = None
+def get_pos (fetch=True) :
+	global last_fetched_actuator_pos
+	
 	if _origin is None :
 		raise ErrorName("origin non defined")
 
 	else :
-		position = []
-		for motor_id, ori, red in zip (_motors_id, _origin, _reduction):
-			position.append((b.actuator_pos(motor_id) - ori)/red)
-		return position
+		if not fetch and last_fetched_actuator_pos is None:
+			raise ErrorName("You have to fetch the position of the motors at least once")
+		elif fetch:
+			last_fetched_actuator_pos = []
+			for motor_id, ori, red in zip (_motors_id, _origin, _reduction):
+				last_fetched_actuator_pos.append((b.actuator_pos(motor_id) - ori)/red)
+		
+		return last_fetched_actuator_pos
 
 def get_speeds ():
 	speeds = []

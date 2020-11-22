@@ -13,7 +13,8 @@ ip -details -statistics link show can0
 import time
 import numpy as np
 
-#from actor import SimpleActor, MixtureOfExpert, LSTMActor
+from actor import SimpleActor, MixtureOfExpert, LSTMActor
+import obs_parser
 import motors
 import kinematics
 
@@ -47,12 +48,8 @@ if __name__ == "__main__":
 		actor = LSTMActor(env)
 	
 	actor.load(path)
-	
-	obs = obs_parser.get_obs()
-	print(obs)
-	print(actor.model(obs))
-	
 	"""
+	
 	
 	motors.check_configuration ()
 	"""
@@ -64,13 +61,20 @@ if __name__ == "__main__":
 		
 		input("Enter to start the dog")
 		action_at_speed([0.5, 0.5, 0.] * 4)
-	"""
+		
 	input("Enter to go to rest")
 	motors.goto_rest ()
 	input("Enter to stop the dog")
 	
 	motors.disengage ()
 	
+	"""
+	
+	
+	obs_parser.update_readings ()
+	obs = obs_parser.get_obs()
+	print(obs)
+	#print(actor.model(obs))
 	
 	
 	

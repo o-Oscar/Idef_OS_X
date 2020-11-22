@@ -68,11 +68,13 @@ def actuator_pos (motor_id): # actuator pos in rad nice and clean
 	data[0] = 0
 	return struct.unpack("<q", data)[0] * 2*np.pi / 2**8 / 36000 / 6
 	
+
 def actuator_info (motor_id): # actuator pos in rad nice and clean
 	data=send_command([0x9C, 0, 0, 0, 0, 0, 0, 0], motor_id).data
 	speed = struct.unpack("<h", data[4:6])[0] * 2*np.pi / 360 / 6
 	torque = struct.unpack("<h", data[2:4])[0]
 	return speed, torque
+
 	
 def turn_off (motor_id): # turns the motor off (CONNECTS the motor phases)
 	data = send_command([0x80, 0, 0, 0, 0, 0, 0, 0],motor_id).data
