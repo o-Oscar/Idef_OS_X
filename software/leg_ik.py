@@ -119,3 +119,6 @@ class Leg:
 		u /= np.sqrt(np.sum(np.square(u)))
 		b = np.sum(p2*u)
 		return u, b
+
+	def standard_rot (self, rot):
+		return [rot[0]*self.fac_1, rot[1]*self.fac_2, rot[2]*self.fac_3]

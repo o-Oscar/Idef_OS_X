@@ -2,7 +2,7 @@
 sudo ip link set can0 up type can bitrate 1000000
 cd /home/pi/psc/IDEFX/software
 source activate psc
-python main.py
+py main.py
 
 sudo ip link set can0 down
 sudo ip link set can0 up type can bitrate 1000000
@@ -12,8 +12,9 @@ ip -details -statistics link show can0
 
 import time
 import numpy as np
+import os
 
-#from actor import SimpleActor, MixtureOfExpert, LSTMActor
+from actor import SimpleActor, MixtureOfExpert, LSTMActor
 import obs_parser
 import motors
 import kinematics
@@ -24,7 +25,7 @@ import kinematics
 
 def action_at_speed (act, dt=1, lamb=0):
 	cur_pose = np.asarray(motors.get_pos())
-	targ_pose = kinematics.motor_pos (act) * 0.01
+	targ_pose = kinematics.motor_pos (act) * 1
 	delta_pose = targ_pose-cur_pose
 	targ_pose += delta_pose*lamb
 	
@@ -37,7 +38,7 @@ if __name__ == "__main__":
 	"""
 	env = obs_parser.Env()
 	actor_type = "simple"
-	path = "models\\expert\\{}"
+	path = os.getcwd() + "/models/expert/{}"
 	
 	if actor_type=="mix":
 		primitives = [SimpleActor(env) for i in range(2)]
@@ -48,15 +49,17 @@ if __name__ == "__main__":
 		actor = LSTMActor(env)
 	
 	actor.load(path)
+	#actor.save(path)
 	"""
 	
 	
 	motors.check_configuration ()
 	
 	input("Enter to start the dog")
-	action_at_speed([0.5, 0.5, 0.5] * 4)
+	action_at_speed([0.5, 0.5, 0.3] * 4)
 		
 	input("Enter to go to rest")
+	print(kinematics.standard_rot(motors.get_pos()))
 	motors.goto_rest ()
 	input("Enter to stop the dog")
 	
@@ -64,11 +67,12 @@ if __name__ == "__main__":
 	
 	
 	
-	"""
+	
 	obs_parser.update_readings ()
-	obs = obs_parser.get_obs()
+	obs = obs_parser.get_obs([1, 0], [0])
 	print(obs)
-	#print(actor.model(obs))
-	"""
+	print(actor.model(actor.scaler.scale_obs(obs)))
+	
+	
 	
 	

@@ -2,7 +2,7 @@
 sudo ip link set can0 up type can bitrate 1000000
 cd /home/pi/psc/IDEFX/software
 source activate psc
-python init.py set
+py init.py set
 
 sudo ip link set can0 down
 sudo ip link set can0 up type can bitrate 1000000

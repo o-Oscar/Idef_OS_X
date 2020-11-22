@@ -1,5 +1,7 @@
 import motors
 import imu
+import numpy as np
+import kinematics
 
 #motors.get_speeds()
 
@@ -21,7 +23,7 @@ class Env:
 		self.obs_dim = 21
 
 def get_obs (pos_vel_cmd, rot_vel_cmd):
-	joint_pos = np.asarray(motors.get_pos(fetch=False))
+	joint_pos = np.asarray(kinematics.standard_rot(motors.get_pos(fetch=False)))
 	#joint_speed = np.asarray(motors.get_speeds())
 	up_vect = np.asarray(imu.up_vect)
 	rot_speed = np.asarray(imu.v_rot)
@@ -35,5 +37,5 @@ def get_obs (pos_vel_cmd, rot_vel_cmd):
 	return obs
 
 def update_readings ():
-	print(motors.get_pos())
-	print(imu.read_imu())
+	motors.get_pos()
+	imu.read_imu()
