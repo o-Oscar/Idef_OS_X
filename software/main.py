@@ -13,7 +13,7 @@ ip -details -statistics link show can0
 import time
 import numpy as np
 
-from actor import SimpleActor, MixtureOfExpert, LSTMActor
+#from actor import SimpleActor, MixtureOfExpert, LSTMActor
 import obs_parser
 import motors
 import kinematics
@@ -24,7 +24,7 @@ import kinematics
 
 def action_at_speed (act, dt=1, lamb=0):
 	cur_pose = np.asarray(motors.get_pos())
-	targ_pose = kinematics.motor_pos (act)
+	targ_pose = kinematics.motor_pos (act) * 0.01
 	delta_pose = targ_pose-cur_pose
 	targ_pose += delta_pose*lamb
 	
@@ -52,15 +52,9 @@ if __name__ == "__main__":
 	
 	
 	motors.check_configuration ()
-	"""
+	
 	input("Enter to start the dog")
-	action_at_speed([0.5, 0.5, 0.] * 4)
-	for i in range(3):
-		input("Enter to start the dog")
-		action_at_speed([0.5, 0.5, 0.5] * 4)
-		
-		input("Enter to start the dog")
-		action_at_speed([0.5, 0.5, 0.] * 4)
+	action_at_speed([0.5, 0.5, 0.5] * 4)
 		
 	input("Enter to go to rest")
 	motors.goto_rest ()
@@ -68,13 +62,13 @@ if __name__ == "__main__":
 	
 	motors.disengage ()
 	
+	
+	
 	"""
-	
-	
 	obs_parser.update_readings ()
 	obs = obs_parser.get_obs()
 	print(obs)
 	#print(actor.model(obs))
-	
+	"""
 	
 	
