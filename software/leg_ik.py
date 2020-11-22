@@ -72,7 +72,7 @@ class Leg:
 		ym = 0.1
 		l = self.l1+self.l2 # -0.01
 		xm = 0.1
-		zm = zM - 0.1 #-np.sqrt(l*l-xm*xm-ym*ym)
+		zm = zM - 0.15 #-np.sqrt(l*l-xm*xm-ym*ym)
 		xM = xm #np.sqrt(l*l-ym*ym-zM*zM)
 		
 		umx, bmx = self.face_from_point([-xm, -ym, zm], [-xm, ym, zm], [-xM, ym, zM])
