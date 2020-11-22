@@ -105,8 +105,14 @@ def get_pos () :
 		position = []
 		for motor_id, ori, red in zip (_motors_id, _origin, _reduction):
 			position.append((b.actuator_pos(motor_id) - ori)/red)
-		return(position)
+		return position
 
+def get_speeds ():
+	speeds = []
+	for motor_id, red in zip (_motors_id, _reduction):
+		raw_speed, raw_torque = actuator_info(motor_id)
+		speeds.append(raw_speed/red)
+	return speeds
 
 def disengage():
 	for motor_id in _motors_id :

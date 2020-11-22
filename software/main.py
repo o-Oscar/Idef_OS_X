@@ -13,7 +13,7 @@ ip -details -statistics link show can0
 import time
 import numpy as np
 
-#from models.actor import SimpleActor, MixtureOfExpert, LSTMActor
+#from actor import SimpleActor, MixtureOfExpert, LSTMActor
 import motors
 import kinematics
 
@@ -21,18 +21,22 @@ import kinematics
 #down_pose = kinematics.motor_pos ([0.5, 0.4, 0.5] * 4)
 #trans_speed = np.abs((up_pose-down_pose)/dt)
 
-def action_at_speed (act, dt=1):
+def action_at_speed (act, dt=1, lamb=0):
 	cur_pose = np.asarray(motors.get_pos())
 	targ_pose = kinematics.motor_pos (act)
-	speed = np.minimum(np.abs((targ_pose-cur_pose)/dt), 5)
+	delta_pose = targ_pose-cur_pose
+	targ_pose += delta_pose*lamb
+	
+	speed = np.minimum(np.abs(delta_pose/dt), 5)
 	motors.goto (targ_pose, targ_vel=speed)
 
 if __name__ == "__main__":
 	
 	# actor
 	"""
+	env = obs_parser.Env()
 	actor_type = "simple"
-	path = "results\\exp_0\\models\\expert\\{}"
+	path = "models\\expert\\{}"
 	
 	if actor_type=="mix":
 		primitives = [SimpleActor(env) for i in range(2)]
@@ -43,10 +47,12 @@ if __name__ == "__main__":
 		actor = LSTMActor(env)
 	
 	actor.load(path)
+	
+	obs = obs_parser.get_obs()
+	print(obs)
+	print(actor.model(obs))
+	
 	"""
-	
-	#print (kinematics.motor_pos([0.5, 0.5, 1]*4))
-	
 	
 	motors.check_configuration ()
 	"""
@@ -69,3 +75,7 @@ if __name__ == "__main__":
 	
 	
 	
+<<<<<<< HEAD
+=======
+
+>>>>>>> 492e80440ed203aa1df322732b425f4b4053d44d
