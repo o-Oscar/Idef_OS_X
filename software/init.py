@@ -47,6 +47,7 @@ if __name__ == "__main__":
 		
 		# choosing the rest pose
 		for motor_id in all_motor_id:
+			print(motor_id)
 			b.set_zero_torque(motor_id)
 		
 		
