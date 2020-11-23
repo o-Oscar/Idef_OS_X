@@ -71,6 +71,9 @@ class BaseActor ():
 		self.scaler.save(path)
 		
 	def load (self, path):
+		for layer in self.core_model.layers:
+			for var in layer.variables:
+				print(var.shape)
 		self.core_model.load_weights(path.format("actor"))
 		self.scaler.load(path)
 
@@ -107,7 +110,7 @@ class SimpleActor (BaseActor):
 		
 		
 		self.model = tf.keras.Model((input, ()), (self.core_model(obs_ph)[0], ()), name="actor_model")
-		
+		self.core_model.summary()
 		last_layer.set_weights([x/10 for x in last_layer.get_weights()])
 		
 	def get_init_state(self, n_env):

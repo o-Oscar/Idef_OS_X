@@ -14,7 +14,7 @@ import time
 import numpy as np
 import os
 
-#from actor import SimpleActor, MixtureOfExpert, LSTMActor
+from actor import SimpleActor, MixtureOfExpert, LSTMActor
 import obs_parser
 import motors
 import kinematics
@@ -22,6 +22,7 @@ import kinematics
 #up_pose = kinematics.motor_pos ([0.5, 0.5, 0.5] * 4)
 #down_pose = kinematics.motor_pos ([0.5, 0.4, 0.5] * 4)
 #trans_speed = np.abs((up_pose-down_pose)/dt)
+zero_act = np.asarray([0.5, 0.7, 0.3, 0.5, 0.3, 0.3]*2)
 
 def action_at_speed (act, dt=1, lamb=0):
 	cur_pose = np.asarray(motors.get_pos())
@@ -35,7 +36,6 @@ def action_at_speed (act, dt=1, lamb=0):
 if __name__ == "__main__":
 	
 	# actor
-	"""
 	env = obs_parser.Env()
 	actor_type = "simple"
 	path = os.getcwd() + "/models/expert_0.5ms/{}"
@@ -50,13 +50,12 @@ if __name__ == "__main__":
 	
 	actor.load(path)
 	#actor.save(path)
+	
 	"""
-	
-	
 	motors.check_configuration ()
 	
 	input("Enter to start the dog")
-	action_at_speed([0.5, 0.5, 0.3] * 4)
+	action_at_speed(zero_act)
 		
 	input("Enter to go to rest")
 	print(kinematics.standard_rot(motors.get_pos()))
@@ -64,7 +63,7 @@ if __name__ == "__main__":
 	input("Enter to stop the dog")
 	
 	motors.disengage ()
-	
+	"""
 	"""
 	
 	
