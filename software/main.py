@@ -14,7 +14,7 @@ import time
 import numpy as np
 import os
 
-from actor import SimpleActor, MixtureOfExpert, LSTMActor
+#from actor import SimpleActor, MixtureOfExpert, LSTMActor
 import obs_parser
 import motors
 import kinematics
@@ -65,14 +65,14 @@ if __name__ == "__main__":
 	
 	motors.disengage ()
 	
-	
+	"""
 	
 	
 	obs_parser.update_readings ()
 	obs = obs_parser.get_obs([1, 0], [0])
 	print(obs)
 	print(actor.model(actor.scaler.scale_obs(obs)))
-	
+	"""
 	
 	
 	
