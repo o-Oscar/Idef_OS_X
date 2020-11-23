@@ -16,7 +16,7 @@ import os
 
 from actor import SimpleActor, MixtureOfExpert, LSTMActor
 import obs_parser
-import motors
+#import motors
 import kinematics
 
 #up_pose = kinematics.motor_pos ([0.5, 0.5, 0.5] * 4)

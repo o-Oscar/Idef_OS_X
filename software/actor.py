@@ -4,35 +4,58 @@ from tensorflow.keras import layers
 
 class ObsScaler:
 	def __init__ (self, env):
-		self.mean = np.zeros(shape=(env.obs_dim,))
-		self.std = np.ones(shape=(env.obs_dim,))
+		self.mean = np.ones(shape=(env.obs_dim,)) * 0.
+		self.std = np.ones(shape=(env.obs_dim,)) * 1.
+		self.is_init = False
 		
-		self.lamb = 0.9
+		self.lamb = 0.99
 	
 	def update (self, obs):
 		
+		#M = obs.max(axis=(0, 1))
+		#m = obs.min(axis=(0, 1))
+		#mean_hat = (M+m)/2 #np.mean(obs, axis=(0, 1))
+		#std_hat = M-m #np.std(obs, axis=(0, 1))
 		mean_hat = np.mean(obs, axis=(0, 1))
 		std_hat = np.std(obs, axis=(0, 1))
 		
-		"""
-		std_lamb = self.lamb * np.exp(-np.square((self.std - std_hat)/(2*self.std)))
-		self.std = std_lamb * self.std + (1-std_lamb) * std_hat
-		
-		mean_lamb = self.lamb * np.exp(-np.square((self.mean - mean_hat)/(2*self.std)))
-		self.mean = mean_lamb * self.mean + (1-mean_lamb) * mean_hat
-		"""
 		
 		mean_lamb = self.lamb
 		std_lamb = self.lamb
 		
 		self.mean = mean_lamb * self.mean + (1-mean_lamb) * mean_hat
 		self.std = std_lamb * self.std + (1-std_lamb) * std_hat
+		self.is_init = True
 		
-		self.std = np.maximum(self.std, std_hat)
+		#self.std = np.maximum(self.std, std_hat)
+		"""
+		if self.is_init:
+			cur_M = self.mean+self.std
+			cur_m = self.mean-self.std
+			
+			M = obs.max(axis=(0, 1))
+			m = obs.min(axis=(0, 1))
+			
+			new_M = np.maximum(M, cur_M)
+			new_m = np.minimum(m, cur_m)
+			
+			self.mean = (new_M+new_m)/2
+			self.std = (new_M-new_m)/2
+		else:
+			self.is_init = True
+			
+			M = obs.max(axis=(0, 1))
+			m = obs.min(axis=(0, 1))
+			
+			self.mean = (M+m)/2
+			self.std = (M-m)/2
+		"""
 		
-	
 	def scale_obs (self, obs):
-		return ((obs - self.mean)/(self.std + 1e-7)).astype(np.float32)
+		if self.is_init:
+			return ((obs - self.mean)/(self.std + 1e-7)).astype(np.float32)
+		else:
+			return (np.asarray(obs)).astype(np.float32)
 	
 	def save (self, path):
 		np.save(path.format("scaler_mean") + ".npy", self.mean)
@@ -41,11 +64,14 @@ class ObsScaler:
 	def load (self, path):
 		self.mean = np.load (path.format("scaler_mean") + ".npy")
 		self.std = np.load (path.format("scaler_std") + ".npy")
-	
+		self.is_init = True
+		#print("scaler not loaded", flush=True)
+		
 	def get_weights (self):
 		return (self.mean, self.std)
 	
 	def set_weights (self, data):
+		self.is_init = True
 		self.mean, self.std = data
 
 class BaseActor ():
@@ -71,9 +97,6 @@ class BaseActor ():
 		self.scaler.save(path)
 		
 	def load (self, path):
-		for layer in self.core_model.layers:
-			for var in layer.variables:
-				print(var.shape)
 		self.core_model.load_weights(path.format("actor"))
 		self.scaler.load(path)
 
@@ -102,15 +125,18 @@ class SimpleActor (BaseActor):
 			
 			mean = layers.Dense(first_size, activation=activation)(obs_input)
 			mean = layers.Dense(secound_size, activation=activation)(mean)
+			
+			skip = obs_input
+			
 			last_layer = layers.Dense(self.act_dim, activation='tanh')
-			action = (last_layer(mean)+1)/2
+			action = (last_layer(tf.concat((mean, skip), axis=-1))+1)/2
 			
 			self.core_model = tf.keras.Model((obs_input, ()), (action, ()), name="actor_core_model")
-			#self.model.summary()
 		
 		
 		self.model = tf.keras.Model((input, ()), (self.core_model(obs_ph)[0], ()), name="actor_model")
 		self.core_model.summary()
+		
 		last_layer.set_weights([x/10 for x in last_layer.get_weights()])
 		
 	def get_init_state(self, n_env):
@@ -213,7 +239,7 @@ class oldLSTMActor (BaseActor):
 			action = (last_layer(lstm)+1)/2
 			
 			self.core_model = tf.keras.Model((obs_input, init_state), (action, end_state), name="actor_core_model")
-			#self.model.summary()
+			self.core_model.summary()
 		
 		
 		self.model = tf.keras.Model((input, main_init_state), self.core_model((obs_ph, main_init_state)), name="actor_model")
@@ -252,9 +278,12 @@ class LSTMActor (BaseActor):
 			obs_input = layers.Input(shape=(None, obs_ph.shape[-1]))
 			init_state = (layers.Input(shape=(self.lstm_size, )), layers.Input(shape=(self.lstm_size, )))
 			
+			skip = obs_input
+			
 			influence = layers.Dense(128, activation='relu')(obs_input)
 			lstm, *end_state = layers.LSTM(self.lstm_size, return_sequences=True, return_state=True)(influence, initial_state=init_state)
-			conc = lstm # tf.concat((influence, lstm), axis=-1)
+			conc = tf.concat((lstm, skip), axis=-1)
+			conc = lstm
 			
 			last_layer = layers.Dense(self.act_dim, activation='tanh')
 			action = (last_layer(conc)+1)/2
