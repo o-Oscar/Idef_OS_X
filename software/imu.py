@@ -45,6 +45,11 @@ def read_imu ():
 
 
 if __name__ == "__main__":
+	while (True):
+		read_imu ()
+		print(up_vect)
+	
+	"""
 	with serial.Serial('/dev/ttyUSB0', 9600, timeout=3) as ser:
 		
 		all_data = []
@@ -71,6 +76,6 @@ if __name__ == "__main__":
 			print(np.asarray(all_data[-1]))
 			print()
 			time.sleep(0.3)
-			
+	"""		
 	#plt.plot(all_data)
 	#plt.show()
