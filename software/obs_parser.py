@@ -26,8 +26,8 @@ class Env:
 def get_obs (pos_vel_cmd, rot_vel_cmd):
 	joint_pos = np.asarray(kinematics.standard_rot(motors.get_pos(fetch=False)))
 	#joint_speed = np.asarray(motors.get_speeds())
-	#up_vect = np.asarray(imu.up_vect)
-	up_vect = np.asarray([0,0,1])
+	up_vect = np.asarray(imu.up_vect)
+	#up_vect = np.asarray([0,0,1])
 	rot_speed = np.asarray(imu.v_rot)
 	pos_vel_cmd = np.asarray(pos_vel_cmd)
 	rot_vel_cmd = np.asarray(rot_vel_cmd)
@@ -40,4 +40,4 @@ def get_obs (pos_vel_cmd, rot_vel_cmd):
 
 def update_readings ():
 	motors.get_pos()
-	#imu.read_imu()
+	imu.read_imu()
