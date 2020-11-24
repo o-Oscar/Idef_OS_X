@@ -135,7 +135,7 @@ class SimpleActor (BaseActor):
 		
 		
 		self.model = tf.keras.Model((input, ()), (self.core_model(obs_ph)[0], ()), name="actor_model")
-		self.core_model.summary()
+		#self.core_model.summary()
 		
 		last_layer.set_weights([x/10 for x in last_layer.get_weights()])
 		

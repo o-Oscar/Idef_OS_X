@@ -1,5 +1,5 @@
-#import motors
-#import imu
+import motors
+import imu
 import numpy as np
 import kinematics
 
@@ -21,6 +21,7 @@ class Env:
 	def __init__ (self):
 		self.act_dim = 12
 		self.obs_dim = 21
+		self.num_envs = 1
 
 def get_obs (pos_vel_cmd, rot_vel_cmd):
 	joint_pos = np.asarray(kinematics.standard_rot(motors.get_pos(fetch=False)))
@@ -39,4 +40,4 @@ def get_obs (pos_vel_cmd, rot_vel_cmd):
 
 def update_readings ():
 	motors.get_pos()
-	imu.read_imu()
+	#imu.read_imu()
