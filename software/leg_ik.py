@@ -6,6 +6,7 @@ class Leg:
 		self.l1 = 0.196
 		self.l2 = 0.180
 		self.e = 0.02 + 0.098/2 # 0.069
+		self.max_norm_2 = (self.l1+self.l2)**2 + self.e**2 - 0.01
 		
 		self.fac_1 = -1 if inv_1 else 1
 		self.fac_2 = -1 if inv_2 else 1
@@ -30,6 +31,11 @@ class Leg:
 		u = (np.identity(3)-a) @ self.u_m + a @ self.u_M
 		b = (np.identity(3)-a) @ self.b_m + a @ self.b_M
 		x = np.linalg.solve (u, b)
+		norm_2 = np.sum(np.square(x))
+		#print(x, action)
+		if norm_2 >= self.max_norm_2:
+			x = x*np.sqrt(self.max_norm_2/norm_2)
+		
 		return x
 	"""
 	# --- From cathesian coordinate to rotation angle ---
@@ -72,17 +78,32 @@ class Leg:
 	# --- Creating the work volume ---
 	def create_range (self):
 		
+		
 		zM = -0.23
 		ym = -0.069
 		l = np.sqrt((self.l1+self.l2)**2+self.e**2) -0.01
 		xm = 0.15
 		zm = -0.32 #-np.sqrt(l*l-xm*xm-ym*ym)
+		#zm = -0.35#-np.sqrt(l*l-xm*xm-ym*ym)
 		xM = 0.2 #np.sqrt(l*l-ym*ym-zM*zM)
 		yl = np.sqrt(l**2 - zm**2 - xm**2)
 		yh = np.sqrt(l**2 - zM**2 - xM**2)
+		#zm = -0.35
 		
 		"""
+		zM = -0.23
+		ym = -0.069
+		l = np.sqrt((self.l1+self.l2)**2+self.e**2)
+		xm = l
+		xM = l
+		zm = -l
+		yh = l
+		yl = l
+		"""
 		
+		
+		
+		"""
 		zM = -self.l1*2/3
 		ym = 0.1
 		l = self.l1+self.l2-0.01
