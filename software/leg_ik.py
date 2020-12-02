@@ -3,8 +3,8 @@ import numpy as np
 
 class Leg:
 	def __init__ (self, inv_x=False, inv_y=False, inv_1=False, inv_2=False, inv_3=False):
-		self.l1 = 0.196
-		self.l2 = 0.180
+		self.l1 = 0.196 # 0.2
+		self.l2 = 0.180 # 0.205
 		self.e = 0.02 + 0.098/2 # 0.069
 		
 		self.fac_1 = -1 if inv_1 else 1

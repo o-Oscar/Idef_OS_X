@@ -23,6 +23,7 @@ import kinematics
 #down_pose = kinematics.motor_pos ([0.5, 0.4, 0.5] * 4)
 #trans_speed = np.abs((up_pose-down_pose)/dt)
 zero_act = np.asarray([0.5, 0.7, 0.3, 0.5, 0.3, 0.3]*2)
+act_offset = np.asarray([0.1, 0, -0.1, 0.1, 0, -0.1, -0.1, 0, -0.1, -0.1, 0, -0.1]) * 0
 
 def action_at_speed (act, dt=1, lamb=0, fetch=False):
 	cur_pose = np.asarray(motors.get_pos(fetch=fetch))
@@ -59,7 +60,7 @@ if __name__ == "__main__":
 	
 	last_time = time.time()
 	all_times = [[], [], []]
-	for i in range(1000):
+	for i in range(1):
 		#time.sleep(0.05)
 		start = time.time()
 		obs_parser.update_readings ()
@@ -70,9 +71,9 @@ if __name__ == "__main__":
 		all_times[1].append(time.time()-start)
 		act = act.numpy().flatten()
 		lamb = 1
-		actual_act = act*lamb + zero_act*(1-lamb)
+		actual_act = act*lamb + zero_act*(1-lamb) + act_offset
 		start = time.time()
-		action_at_speed(actual_act, dt=0.3) # not lower than 0.2
+		action_at_speed(actual_act, dt=0.2) # not lower than 0.2
 		all_times[2].append(time.time()-start)
 		#start = time.time()
 		last_time = time.time()
