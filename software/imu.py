@@ -25,6 +25,8 @@ def read_float():
 def read_imu ():
 	global skipped_nb
 	global dumped_nb
+	global up_vect
+	global v_rot
 	
 	waiting_byte = ser.inWaiting()
 	skipped_nb = waiting_byte - waiting_byte%(4*6+1)
@@ -38,8 +40,8 @@ def read_imu ():
 		dumped_nb += 1
 	
 	v_rot = np.asarray([read_float() for i in range(3)])
-	up_vect = np.asarray([read_float() for i in range(3)])
-		
+	raw_up_vect = [read_float() for i in range(3)]
+	up_vect = np.asarray([-raw_up_vect[1], raw_up_vect[0], -raw_up_vect[2]])
 	
 	
 

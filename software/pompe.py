@@ -53,35 +53,17 @@ if __name__ == "__main__":
 	#actor.save(path)
 	
 	motors.check_configuration ()
-	action_at_speed(zero_act, dt=1, fetch=True)
+	
+	for i in range(3):
+		input("Enter to start the dog")
+		action_at_speed([0.5, 0.7, 0., 0.5, 0.3, 0.]*2, dt=1, fetch=True)
+		
+		input("Enter to start the dog")
+		action_at_speed([0.5, 0.7, 0.5, 0.5, 0.3, 0.5]*2, dt=1, fetch=True)
 	
 	input("Enter to start the dog")
+	action_at_speed([0.5, 0.7, 0., 0.5, 0.3, 0.]*2, dt=1, fetch=True)
 	
-	last_time = time.time()
-	all_times = [[], [], []]
-	for i in range(1000):
-		#time.sleep(0.05)
-		start = time.time()
-		obs_parser.update_readings ()
-		all_times[0].append(time.time()-start)
-		obs = obs_parser.get_obs([1, 0], [0])
-		start = time.time()
-		act, init_state = actor.model((actor.scaler.scale_obs(obs), init_state))
-		all_times[1].append(time.time()-start)
-		act = act.numpy().flatten()
-		lamb = 1
-		actual_act = act*lamb + zero_act*(1-lamb)
-		start = time.time()
-		action_at_speed(actual_act, dt=0.3) # not lower than 0.2
-		all_times[2].append(time.time()-start)
-		#start = time.time()
-		last_time = time.time()
-		
-	action_at_speed(zero_act, dt=1, fetch=True)
-	print()
-	print(np.mean(all_times[0]))
-	print(np.mean(all_times[1]))
-	print(np.mean(all_times[2]))
 	input("Enter to go to rest")
 	print(kinematics.standard_rot(motors.get_pos()))
 	motors.goto_rest ()
