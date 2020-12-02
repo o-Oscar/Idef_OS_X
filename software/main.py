@@ -39,7 +39,8 @@ if __name__ == "__main__":
 	# actor
 	env = obs_parser.Env()
 	actor_type = "simple"
-	path = os.getcwd() + "/models/expert_0.5ms/{}"
+	#path = os.getcwd() + "/models/expert_0.5ms/{}"
+	path = os.getcwd() + "/models/expert_soft/{}"
 	
 	if actor_type=="mix":
 		primitives = [SimpleActor(env) for i in range(2)]
