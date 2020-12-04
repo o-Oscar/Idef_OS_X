@@ -101,11 +101,11 @@ class BaseActor ():
 		self.scaler.load(path)
 
 class SimpleActor (BaseActor):
-	def __init__ (self, env, first_size=512, secound_size=256, activation='relu'):
+	def __init__ (self, env, first_size=512, secound_size=256, activation='relu', inp_dim=None):
 		super().__init__(env)
 		
 		with tf.name_scope("input_process"):
-			input = layers.Input(shape=(None, env.obs_dim))
+			input = layers.Input(shape=(inp_dim, env.obs_dim))
 			obs_ph = input
 			
 			# scaling the inputs
@@ -121,7 +121,7 @@ class SimpleActor (BaseActor):
 				print("WARNING (actor) : no blindfold used")
 			
 		with tf.name_scope("core_model"):
-			obs_input = layers.Input(shape=(None, obs_ph.shape[-1]))
+			obs_input = layers.Input(shape=(inp_dim, obs_ph.shape[-1]))
 			
 			mean = layers.Dense(first_size, activation=activation)(obs_input)
 			mean = layers.Dense(secound_size, activation=activation)(mean)
