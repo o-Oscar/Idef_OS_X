@@ -1,15 +1,17 @@
 """
 ssh -L 8765:127.0.0.1:8765 pi@10.221.112.37
+raspberry
 sudo ip link set can0 up type can bitrate 1000000
 cd /home/pi/psc/IDEFX/software
 python3 main.py
 
 arp -a
-ssh -L 8765:127.0.0.1:8765 pi@192.168.1.40      maison
-ssh -L 8765:127.0.0.1:8765 pi@192.168.43.59     telephone
+ssh -L 8765:127.0.0.1:8765 pi@192.168.1.40      maison oscar
+ssh -L 8765:127.0.0.1:8765 pi@192.168.43.59     telephone oscar
 ssh -L 8765:127.0.0.1:8765 pi@10.221.112.37     boyd
 ping 192.168.1.40
 mdp : raspberry
+
 
 sudo ip link set can0 down
 sudo ip link set can0 up type can bitrate 1000000
