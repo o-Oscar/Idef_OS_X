@@ -1,6 +1,8 @@
 """
-ssh -L 8765:127.0.0.1:8765 pi@10.221.112.37
+ssh -L 8765:127.0.0.1:8765 pi@10.221.122.30
+ssh -L 8765:127.0.0.1:8765 pi@192.168.56.255
 raspberry
+
 sudo ip link set can0 up type can bitrate 1000000
 cd /home/pi/psc/IDEFX/software
 python3 main.py
