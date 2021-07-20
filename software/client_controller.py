@@ -5,6 +5,12 @@ import pygame
 import time
 import json
 
+"""
+cd C://Users/oscbo/Documents/Travail/PSC/idefX/v3/Idef_OS_X/software
+conda activate psc
+python client_controller.py
+"""
+
 
 async def send_stuff (name):
 	uri = "ws://localhost:8765"
@@ -22,24 +28,32 @@ def update_remote_cmd (cmd):
 def hello():
 	uri = "ws://localhost:8765"
 	last_time = 0
-	data = {}
 	
 	pygame.init()
 	pygame.joystick.init()
 	
-	while 1:
-
-		pygame.event.get()
-		joystick = pygame.joystick.Joystick(0)
-		joystick.init()
-		for i in range(joystick.get_numaxes()):
-			data["axis_" + str(i)] = joystick.get_axis(i)
-		for i in range(joystick.get_numbuttons()):
-			data["button_"+str(i)] = joystick.get_button(i)
+	use_joiystick = pygame.joystick.get_count() > 0
+	
+	if use_joiystick:
+		while 1:
+			pygame.event.get()
+			joystick = pygame.joystick.Joystick(0)
+			joystick.init()
+			data = {}
+			for i in range(joystick.get_numaxes()):
+				data["axis_" + str(i)] = joystick.get_axis(i)
+			for i in range(joystick.get_numbuttons()):
+				data["button_"+str(i)] = joystick.get_button(i)
+			
+			if time.time() - last_time > 0.3:
+				update_remote_cmd(data)
+				last_time = time.time()
+	else:
+		input("Enter to stop motion")
 		
-		if time.time() - last_time > 0.3:
-			update_remote_cmd(data)
-			last_time = time.time()
+		data = {}
+		data["button_1"] = 1
+		update_remote_cmd(data)
 
 if __name__ == "__main__":
 	hello()
